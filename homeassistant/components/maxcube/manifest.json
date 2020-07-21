@@ -2,6 +2,6 @@
   "domain": "maxcube",
   "name": "eQ-3 MAX!",
   "documentation": "https://www.home-assistant.io/integrations/maxcube",
-  "requirements": ["maxcube-api==0.1.0"],
+  "requirements": ["https://github.com/leppa/python-maxcube-api/archive/0369a564f647a95a99802e5fc70bcceccb9fb43b.zip#maxcube-api==0.1.1"],
   "codeowners": []
 }

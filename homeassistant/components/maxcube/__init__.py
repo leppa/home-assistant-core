@@ -19,6 +19,9 @@ DOMAIN = "maxcube"
 
 DATA_KEY = "maxcube"
 
+ATTR_BATTERY = "battery"
+STATE_LOW = "low"
+
 NOTIFICATION_ID = "maxcube_notification"
 NOTIFICATION_TITLE = "Max!Cube gateway setup"
 

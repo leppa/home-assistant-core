@@ -1,9 +1,12 @@
 """Support for MAX! binary sensors via MAX! Cube."""
 import logging
 
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from maxcube.device import MAX_DEVICE_BATTERY_LOW
 
-from . import DATA_KEY
+from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.const import STATE_OK
+
+from . import ATTR_BATTERY, DATA_KEY, STATE_LOW
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,6 +57,18 @@ class MaxCubeShutter(BinarySensorEntity):
     def is_on(self):
         """Return true if the binary sensor is on/open."""
         return self._state
+
+    @property
+    def device_state_attributes(self):
+        """Return the optional state attributes."""
+        cube = self._cubehandle.cube
+        device = cube.device_by_rf(self._rf_address)
+        attributes = {
+            ATTR_BATTERY: STATE_LOW
+            if device.battery == MAX_DEVICE_BATTERY_LOW
+            else STATE_OK
+        }
+        return attributes
 
     def update(self):
         """Get latest data from MAX! Cube."""

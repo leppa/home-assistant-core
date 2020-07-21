@@ -3,6 +3,7 @@ import logging
 import socket
 
 from maxcube.device import (
+    MAX_DEVICE_BATTERY_LOW,
     MAX_DEVICE_MODE_AUTOMATIC,
     MAX_DEVICE_MODE_BOOST,
     MAX_DEVICE_MODE_MANUAL,
@@ -25,9 +26,9 @@ from homeassistant.components.climate.const import (
     SUPPORT_PRESET_MODE,
     SUPPORT_TARGET_TEMPERATURE,
 )
-from homeassistant.const import ATTR_TEMPERATURE, TEMP_CELSIUS
+from homeassistant.const import ATTR_TEMPERATURE, STATE_OK, TEMP_CELSIUS
 
-from . import DATA_KEY
+from . import ATTR_BATTERY, DATA_KEY, STATE_LOW
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -154,8 +155,9 @@ class MaxCubeClimate(ClimateEntity):
             # temperature according to the schedule. However, current
             # version of the library has a bug which causes an
             # exception when setting values below 8.
-            if temp in [OFF_TEMPERATURE, ON_TEMPERATURE]:
-                temp = device.eco_temperature
+            #           if temp in [OFF_TEMPERATURE, ON_TEMPERATURE]:
+            #                temp = device.eco_temperature
+            temp = 0
             mode = MAX_DEVICE_MODE_AUTOMATIC
 
         cube = self._cubehandle.cube
@@ -260,6 +262,9 @@ class MaxCubeClimate(ClimateEntity):
                 temp = ON_TEMPERATURE
         else:
             mode = HASS_PRESET_TO_MAX_MODE[preset_mode] or MAX_DEVICE_MODE_AUTOMATIC
+            if mode == MAX_DEVICE_MODE_AUTOMATIC:
+                # Reset the temperature according to a schedule
+                temp = 0
 
         with self._cubehandle.mutex:
             try:
@@ -275,6 +280,9 @@ class MaxCubeClimate(ClimateEntity):
         device = cube.device_by_rf(self._rf_address)
         attributes = {}
 
+        attributes[ATTR_BATTERY] = (
+            STATE_LOW if device.battery == MAX_DEVICE_BATTERY_LOW else STATE_OK
+        )
         if cube.is_thermostat(device):
             attributes[ATTR_VALVE_POSITION] = device.valve_position
 
