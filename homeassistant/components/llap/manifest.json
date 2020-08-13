@@ -1,0 +1,8 @@
+{
+  "domain": "llap",
+  "name": "LLAP Intgration",
+  "documentation": "https://github.com/leppa/home-assistant/tree/llap",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": []
+}
